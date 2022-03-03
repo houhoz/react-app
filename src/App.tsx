@@ -1,26 +1,86 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Fragment, useState } from 'react'
+import {
+  makeAnimationSlideLeft,
+  makeAnimationSlideUpDown,
+} from './components/Box/AnimatedVisibility'
+import Boxes from './components/Box'
+import './App.css'
 
-function App() {
+function ToggleButton({
+  label,
+  isOpen,
+  onClick,
+}: {
+  label: string
+  isOpen: boolean
+  onClick: React.MouseEventHandler
+}) {
+  const icon = isOpen ? (
+    <i className='fas fa-toggle-off fa-lg' />
+  ) : (
+    <i className='fas fa-toggle-on fa-lg' />
+  )
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <button className='toggle' onClick={onClick}>
+      {label} {icon}
+    </button>
+  )
 }
 
-export default App;
+function Navbar() {
+  return (
+    <nav className='bar nav'>
+      <li>Item 1</li>
+      <li>Item 2</li>
+      <li>Item 3</li>
+    </nav>
+  )
+}
+
+function Sidebar() {
+  return (
+    <div className='sidebar'>
+      <ul>
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+      </ul>
+    </div>
+  )
+}
+
+const AnimatedSidebar = makeAnimationSlideLeft(Sidebar)
+const AnimatedNavbar = makeAnimationSlideUpDown(Navbar)
+
+function App() {
+  const [navIsOpen, setNavOpen] = useState(false)
+  const [sidebarIsOpen, setSidebarOpen] = useState(false)
+
+  function toggleNav() {
+    setNavOpen(!navIsOpen)
+  }
+
+  function toggleSidebar() {
+    setSidebarOpen(!sidebarIsOpen)
+  }
+
+  return (
+    <Fragment>
+      <main className='main'>
+        <header className='bar header'>
+          <ToggleButton
+            label='Sidebar'
+            isOpen={sidebarIsOpen}
+            onClick={toggleSidebar}
+          />
+          <ToggleButton label='Navbar' isOpen={navIsOpen} onClick={toggleNav} />
+        </header>
+        <AnimatedNavbar open={navIsOpen} />
+        <Boxes />
+      </main>
+      <AnimatedSidebar open={sidebarIsOpen} className='on-top' />
+    </Fragment>
+  )
+}
+
+export default App
